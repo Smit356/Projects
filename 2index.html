@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smit Sapariya - Building Smart Solutions</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        /* General Resets & Global Styles */
+        :root {
+            /* Professional Dark Theme with Vibrant Accents */
+            --primary-color: #00ADB5; /* Teal/Aqua - vibrant and modern */
+            --secondary-color: #FF5722; /* Deep Orange - striking accent */
+            --background-color: #222831; /* Dark Grey/Blue - deep, professional background */
+            --text-color: #EEEEEE; /* Light Grey - crisp and readable text */
+            --card-background: #393E46; /* Slightly lighter dark grey for cards */
+            --border-color: #4A4A4A; /* Subtle border for separation */
+            --font-family: 'Poppins', sans-serif; /* Modern, clean font */
+            --transition-speed: 0.4s ease-in-out; /* Slightly slower for smoother feel */
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            overflow-x: hidden; /* Prevent horizontal scroll from animations */
+            scroll-behavior: smooth; /* Smooth scroll for nav links */
+            position: relative; /* For background animations */
+        }
+
+        /* Subtle Background Graphics/Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--background-color) 0%, rgba(34, 40, 49, 0.9) 100%);
+            z-index: -1;
+            animation: gradientShift 15s ease infinite alternate; /* Slow, mesmerizing shift */
+            opacity: 0.8; /* Subtle overlay */
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- Unique Navigation Experience --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(34, 40, 49, 0.98); /* Near opaque for clarity */
+            padding: 15px 5%;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); /* More pronounced shadow */
+        }
+
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            padding: 5px 10px;
+            position: relative;
+            transition: color var(--transition-speed);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px; /* Slightly thicker underline */
+            background-color: var(--primary-color);
+            left: 50%;
+            bottom: -5px; /* Offset from text */
+            transform: translateX(-50%);
+            transition: width var(--transition-speed) ease-out;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        /* --- Personalized Theme / Branding --- */
+        h1, h2, h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        h1 { font-size: 3.8em; letter-spacing: 1px; }
+        h2 { font-size: 3em; border-bottom: 2px solid var(--secondary-color); display: inline-block; padding-bottom: 5px;}
+        h3 { font-size: 2em; }
+
+        /* --- Subtle Animations & Transitions --- */
+        button, a {
+            transition: all var(--transition-speed);
+        }
+        button:hover, a:hover {
+            transform: translateY(-3px); /* More noticeable lift effect */
+        }
+
+        .section-container {
+            padding: 100px 5% 60px; /* Adjusted padding for fixed navbar */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            opacity: 0; /* Will be animated in by JS */
+            transform: translateY(30px); /* Will be animated in by JS */
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out; /* Slower, smoother animation */
+        }
+        .section-container.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+                gap: 15px;
+                padding: 10px 3%;
+            }
+            .nav-link {
+                font-size: 0.9em;
+            }
+            .section-container {
+                padding: 80px 3% 40px;
+            }
+            h1 { font-size: 2.8em; }
+            h2 { font-size: 2.2em; }
+            h3 { font-size: 1.6em; }
+            .skills-grid, .projects-grid {
+                grid-template-columns: 1fr; /* Single column on small screens */
+            }
+            .hero-photo {
+                width: 160px;
+                height: 160px;
+            }
+        }
+        @media (max-width: 480px) {
+             .contact-links a {
+                font-size: 1em;
+                margin: 0 8px;
+                display: block; /* Stack links */
+                margin-bottom: 10px;
+             }
+             .contact-links {
+                 margin-top: 20px;
+             }
+        }
+
+
+        /* Header/Hero Section */
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-content {
+            z-index: 10;
+            padding-top: 50px; /* Space for fixed navbar */
+        }
+        .hero-photo {
+            width: 220px; /* Slightly larger photo */
+            height: 220px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--primary-color); /* Thicker border */
+            margin-bottom: 25px;
+            box-shadow: 0 0 0 10px rgba(0, 173, 181, 0.3); /* Teal glow */
+            animation: pulse-glow 2.5s infinite ease-in-out alternate; /* Smoother pulse */
+        }
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 0 10px rgba(0, 173, 181, 0.3); }
+            to { box-shadow: 0 0 0 20px rgba(0, 173, 181, 0.0); }
+        }
+
+        .headline {
+            font-size: 1.7em;
+            color: var(--secondary-color);
+            font-weight: 400;
+            margin-top: 10px;
+        }
+
+        /* About Section */
+        .about-me-text {
+            max-width: 900px;
+            margin: 0 auto;
+            font-size: 1.15em; /* Slightly larger text */
+            text-align: center; /* Centered text looks cleaner for about sections */
+            line-height: 1.8; /* More comfortable line spacing */
+            padding: 0 20px;
+        }
+
+        /* Skills Section - Interactive Skill Graph / Progress Bars */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Larger skill items */
+            gap: 35px; /* More space between */
+            margin-top: 50px;
+            max-width: 1100px;
+            width: 100%;
+        }
+        .skill-item {
+            background-color: var(--card-background);
+            padding: 30px; /* More padding */
+            border-radius: 12px; /* Slightly rounder */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3); /* Deeper shadow */
+            position: relative;
+            overflow: hidden;
+            border-left: 6px solid var(--secondary-color); /* Thicker accent border */
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        .skill-item:hover {
+            transform: translateY(-8px); /* More pronounced lift */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+        .skill-item h3 {
+            margin-bottom: 18px;
+            color: var(--primary-color);
+            font-size: 1.4em;
+        }
+        .skill-progress-bar {
+            width: 100%;
+            height: 12px; /* Thicker bar */
+            background-color: var(--border-color);
+            border-radius: 6px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        .skill-progress-fill {
+            height: 100%;
+            background-color: var(--secondary-color);
+            width: 0%;
+            transition: width 1.8s ease-out; /* Even slower, more elegant transition */
+            border-radius: 6px;
+        }
+        .skill-percentage {
+            margin-top: 12px;
+            font-size: 1.1em;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        /* Projects Section */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Larger min-width for cards */
+            gap: 40px; /* More space between projects */
+            margin-top: 50px;
+            max-width: 1200px;
+            width: 100%;
+        }
+        .project-card {
+            background-color: var(--card-background);
+            border-radius: 12px; /* Consistent rounding */
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4); /* Deeper, softer shadow */
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            border: 1px solid var(--border-color); /* Subtle border */
+        }
+        .project-card:hover {
+            transform: translateY(-10px); /* More pronounced lift */
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+        }
+        .project-card-image-container {
+            width: 100%;
+            height: 250px; /* Taller image container */
+            background-color: #111; /* Dark background for images */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            overflow: hidden; /* Ensure image doesn't spill */
+        }
+        .project-card-image {
+            max-width: 100%; /* Ensure image doesn't overflow */
+            max-height: 100%; /* Ensure image doesn't overflow */
+            object-fit: contain; /* **THIS IS THE KEY FIX** - contains the image within its box, no cropping */
+            background-color: transparent; /* Remove background color from image itself */
+            transition: transform 0.5s ease; /* Zoom in on hover */
+        }
+        .project-card:hover .project-card-image {
+            transform: scale(1.05); /* Subtle zoom effect on hover */
+        }
+
+        .project-card-content {
+            padding: 25px; /* More padding */
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .project-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-size: 1.8em;
+        }
+        .project-card p {
+            font-size: 1.05em;
+            margin-bottom: 18px;
+            flex-grow: 1;
+            color: var(--text-color);
+        }
+        .project-card-tech {
+            font-size: 0.95em;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-style: italic;
+            font-weight: 500;
+        }
+        .project-card-links {
+            display: flex;
+            gap: 20px; /* More space between buttons */
+            margin-top: auto; /* Push links to the bottom */
+        }
+        .project-card-links a {
+            flex: 1; /* Make buttons expand to fill space */
+            text-align: center;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 12px 25px; /* Larger buttons */
+            border-radius: 8px; /* More rounded */
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .project-card-links a:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+
+        /* Contact Section */
+        .contact-links {
+            margin-top: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px; /* More space between contact methods */
+        }
+        .contact-links a, .contact-links p {
+            font-size: 1.4em;
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .contact-links a:hover {
+            color: var(--primary-color);
+        }
+        .contact-links i {
+            font-size: 1.8em; /* Larger icons */
+            color: var(--secondary-color);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #111;
+            color: #aaa;
+            padding: 35px 20px;
+            text-align: center;
+            font-size: 0.95em;
+            border-top: 1px solid var(--border-color);
+            margin-top: 50px; /* Space above footer */
+        }
+        .footer p {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useEffect, useRef, useState } = React;
+
+        // --- Data for your portfolio ---
+        const portfolioData = {
+            name: "Smit Sapariya",
+            headline: "Building Smart Solutions with Code and Creativity",
+            about: `I'm a diploma holder in Computer Engineering and currently pursuing my B.Tech in Information Technology. As a fresher stepping into the tech industry, I bring a strong foundation in core concepts along with a growing passion for building real-world solutions through code and design.
+            My technical interests lie in web development, web design, and Android development using Java. I’ve worked with HTML, CSS, and love bringing clean, responsive, and user-friendly interfaces to life. I'm also exploring problem-solving and logical thinking through platforms like Vibes Coding, which keeps my coding skills sharp and ever-improving.
+            What drives me is the constant opportunity to learn and grow. I enjoy working on projects that challenge me to think creatively and collaborate with others to build something meaningful.
+            Outside of the tech world, I enjoy cycling, playing cricket, and traveling—activities that keep me active, curious, and open to new experiences.
+            I’m excited to begin my professional journey, contribute to impactful projects, and learn from experienced mentors who can help me shape a successful and fulfilling career in tech.`,
+            photo: "SMIT SAPARIYA PHOTO.jpg", // CORRECTED PATH
+            contact: {
+                email: "smitsapariya2609@gmail.com",
+                linkedin: "https://www.linkedin.com/in/smit-sapariya-58960424b",
+                github: "https://github.com/Smit356", // UPDATED GITHUB PROFILE
+                location: "Rajkot, Gujarat, India"
+            },
+            skills: [
+                { name: "HTML5", level: 90 },
+                { name: "CSS3", level: 85 },
+                { name: "Responsive Design", level: 88 },
+                { name: "JavaScript", level: 75 },
+                { name: "Java (Android)", level: 80 },
+                { name: "Android SDK", level: 78 },
+                { name: "XML (Android UI)", level: 75 },
+                { name: "Android Studio", level: 82 },
+                { name: "VS Code", level: 90 },
+                { name: "Git & GitHub", level: 85 },
+                { name: "UI/UX Principles", level: 70 },
+                { name: "Problem Solving", level: 85 }
+            ],
+            projects: [
+                {
+                    id: 1,
+                    title: "Weather Dashboard Website – SkyCast",
+                    description: `SkyCast is a weather dashboard web app designed to provide real-time weather updates for any city entered by the user. The app displays temperature, humidity, wind speed, and general weather conditions in a clean and user-friendly interface. It helps users quickly check weather conditions before planning their day or travel.`,
+                    role: "I independently designed and developed the entire application using HTML, CSS, and JavaScript. I focused on building a clean, responsive UI and integrating weather data using JavaScript logic. All coding and testing were done using the Vibes Coding platform.",
+                    technologies: ["HTML", "CSS", "JavaScript", "Vibes Coding Platform"],
+                    liveDemo: "https://smit356.github.io/skycast-weather-app/", // UPDATED LINK
+                    githubRepo: "https://github.com/Smit356", // UPDATED LINK
+                    image: "weather.png", // CORRECTED PATH
+                    learnings: `Gained hands-on experience integrating real-time data using JavaScript. Improved layout and styling skills with CSS. Practiced error handling and input validation. Learned to debug and test responsive design for various screen sizes.`
+                },
+                {
+                    id: 2,
+                    title: "Daily Routine Website – MyDay",
+                    description: `MyDay is a simple and practical daily routine management app that allows users to organize their tasks throughout the day. The app enables task listing, time-blocking, and task completion tracking, making it easier for users to manage their productivity and stay organized.`,
+                    role: "I conceptualized, designed, and developed the full website using core web technologies. I handled the layout, user interface design, and the logic for adding and managing daily tasks. Development was done on the Vibes Coding platform.",
+                    technologies: ["HTML", "CSS", "JavaScript", "Vibes Coding Platform"],
+                    liveDemo: "https://smit356.github.io/MyDay/", // UPDATED LINK
+                    githubRepo: "https://github.com/Smit356", // UPDATED LINK
+                    image: "daily_routine_logo.png", // CORRECTED PATH
+                    learnings: `Strengthened JavaScript skills through DOM manipulation and dynamic content. Learned how to structure code for better readability and reusability. Understood the importance of simple UI/UX design for productivity apps. Practiced real-world problem-solving by building a tool for daily use.`
+                }
+            ]
+        };
+
+        // --- Reusable Component for Section Visibility Animation ---
+        const AnimatedSection = ({ children, id, className }) => {
+            const sectionRef = useRef(null);
+            useEffect(() => {
+                const observer = new IntersectionObserver(
+                    ([entry]) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            // observer.unobserve(entry.target); // Optional: Only animate once
+                        } else {
+                            // Optional: Remove class if you want animation to re-trigger on scroll back
+                            // entry.target.classList.remove('is-visible');
+                        }
+                    },
+                    {
+                        threshold: 0.2 // Trigger when 20% of the section is visible
+                    }
+                );
+                if (sectionRef.current) {
+                    observer.observe(sectionRef.current);
+                }
+                return () => {
+                    if (sectionRef.current) {
+                        observer.unobserve(sectionRef.current);
+                    }
+                };
+            }, []);
+
+            return (
+                <section id={id} ref={sectionRef} className={`section-container ${className || ''}`}>
+                    {children}
+                </section>
+            );
+        };
+
+        // --- React Components ---
+
+        // Navbar Component
+        const Navbar = () => {
+            return (
+                <nav className="navbar">
+                    <a href="#home" className="nav-link">Home</a>
+                    <a href="#about" className="nav-link">About</a>
+                    <a href="#skills" className="nav-link">Skills</a>
+                    <a href="#projects" className="nav-link">Projects</a>
+                    <a href="#contact" className="nav-link">Contact</a>
+                </nav>
+            );
+        };
+
+        // Hero Section
+        const HeroSection = ({ name, headline, photo }) => (
+            <AnimatedSection id="home" className="hero-section">
+                <div className="hero-content">
+                    <img src={photo} alt={name} className="hero-photo" />
+                    <h1>{name}</h1>
+                    <p className="headline">{headline}</p>
+                </div>
+            </AnimatedSection>
+        );
+
+        // About Section
+        const AboutSection = ({ about }) => (
+            <AnimatedSection id="about">
+                <h2>About Me</h2>
+                <p className="about-me-text">{about}</p>
+            </AnimatedSection>
+        );
+
+        // Skill Progress Bar Component
+        const SkillProgressBar = ({ name, level }) => {
+            const [filled, setFilled] = useState(false);
+            const skillRef = useRef(null);
+
+            useEffect(() => {
+                const observer = new IntersectionObserver(
+                    ([entry]) => {
+                        if (entry.isIntersecting && !filled) {
+                            setFilled(true);
+                        } else if (!entry.isIntersecting && filled) {
+                            // Optional: Reset animation when out of view
+                            // setFilled(false);
+                        }
+                    },
+                    { threshold: 0.5 } // Trigger when 50% of the skill bar is visible
+                );
+
+                if (skillRef.current) {
+                    observer.observe(skillRef.current);
+                }
+
+                return () => {
+                    if (skillRef.current) {
+                        observer.unobserve(skillRef.current);
+                    }
+                };
+            }, [filled]);
+
+            return (
+                <div className="skill-item" ref={skillRef}>
+                    <h3>{name}</h3>
+                    <div className="skill-progress-bar">
+                        <div
+                            className="skill-progress-fill"
+                            style={{ width: filled ? `${level}%` : '0%' }}
+                        ></div>
+                    </div>
+                    <span className="skill-percentage">{level}%</span>
+                </div>
+            );
+        };
+
+        // Skills Section (Animated Skill Graph / Progress Bars)
+        const SkillsSection = ({ skills }) => (
+            <AnimatedSection id="skills">
+                <h2>My Skills</h2>
+                <div className="skills-grid">
+                    {skills.map(skill => (
+                        <SkillProgressBar key={skill.name} name={skill.name} level={skill.level} />
+                    ))}
+                </div>
+            </AnimatedSection>
+        );
+
+        // Project Card Component
+        const ProjectCard = ({ project }) => (
+            <div className="project-card">
+                <div className="project-card-image-container">
+                    <img src={project.image} alt={project.title} className="project-card-image" />
+                </div>
+                <div className="project-card-content">
+                    <h3>{project.title}</h3>
+                    <p>{project.description}</p>
+                    <p className="project-card-tech">**Tech:** {project.technologies.join(', ')}</p>
+                    <div className="project-card-links">
+                        {project.liveDemo && <a href={project.liveDemo} target="_blank" rel="noopener noreferrer">Live Demo</a>}
+                        {project.githubRepo && <a href={project.githubRepo} target="_blank" rel="noopener noreferrer">GitHub</a>}
+                    </div>
+                </div>
+            </div>
+        );
+
+        // Projects Section
+        const ProjectsSection = ({ projects }) => (
+            <AnimatedSection id="projects">
+                <h2>My Projects</h2>
+                <div className="projects-grid">
+                    {projects.map(project => (
+                        <ProjectCard key={project.id} project={project} />
+                    ))}
+                </div>
+            </AnimatedSection>
+        );
+
+        // Contact Section
+        const ContactSection = ({ contact }) => (
+            <AnimatedSection id="contact">
+                <h2>Get In Touch</h2>
+                <p>I'm always open to new opportunities and collaborations. Feel free to reach out!</p>
+                <div className="contact-links">
+                    <a href={`mailto:${contact.email}`}><i className="fas fa-envelope"></i> {contact.email}</a>
+                    <a href={contact.linkedin} target="_blank" rel="noopener noreferrer"><i className="fab fa-linkedin"></i> LinkedIn</a>
+                    <a href={contact.github} target="_blank" rel="noopener noreferrer"><i className="fab fa-github"></i> GitHub</a>
+                    {contact.location && <p><i className="fas fa-map-marker-alt"></i> {contact.location}</p>}
+                </div>
+            </AnimatedSection>
+        );
+
+        // Footer Component
+        const Footer = ({ name }) => (
+            <footer className="footer">
+                <p>&copy; {new Date().getFullYear()} {name}. All rights reserved.</p>
+                <p>Built with ❤️ and React</p>
+            </footer>
+        );
+
+        // Main App Component
+        const App = () => {
+            return (
+                <React.Fragment>
+                    <Navbar />
+                    <HeroSection
+                        name={portfolioData.name}
+                        headline={portfolioData.headline}
+                        photo={portfolioData.photo}
+                    />
+                    <AboutSection about={portfolioData.about} />
+                    <SkillsSection skills={portfolioData.skills} />
+                    <ProjectsSection projects={portfolioData.projects} />
+                    <ContactSection contact={portfolioData.contact} />
+                    <Footer name={portfolioData.name} />
+                </React.Fragment>
+            );
+        };
+
+        // Render the App
+        ReactDOM.render(<App />, document.getElementById('root'));
+
+        // --- Smooth Scrolling for Navigation ---
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    const offset = document.querySelector('.navbar').offsetHeight; // Account for fixed navbar height
+                    const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+                    const offsetPosition = elementPosition - offset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
